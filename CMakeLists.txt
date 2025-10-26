@@ -2,8 +2,21 @@ cmake_minimum_required (VERSION 3.1)
 
 project (OpenSimplexNoise)
 
-add_library(${PROJECT_NAME} SHARED
-    OpenSimplexNoise/OpenSimplexNoise.cpp)
+option(OSN_BUILD_STATIC "BUILD STATIC LIBRARIES" ON)
+option(OSN_BUILD_SHARED "BUILD SHARED LIBRARIES" ON)
+
+if(NOT OSN_BUILD_STATIC AND NOT OSN_BUILD_SHARED)
+    message(SEND_ERROR "You need to build at least one flavor of OpenSimplexNoise")
+endif()
+
+if (OSN_BUILD_STATIC AND NOT OSN_BUILD_SHARED)
+    add_library(${PROJECT_NAME} STATIC
+        OpenSimplexNoise/OpenSimplexNoise.cpp)
+endif ()
+if (NOT OSN_BUILD_STATIC AND OSN_BUILD_SHARED)
+    add_library(${PROJECT_NAME} SHARED
+        OpenSimplexNoise/OpenSimplexNoise.cpp)
+endif ()
 
 target_include_directories(
     ${PROJECT_NAME}
